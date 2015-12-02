@@ -1,0 +1,36 @@
+---
+
+# Add BrightBox apt repo
+- name: Add the Brightbox apt repo for Ruby versions
+  become: yes
+  apt_repository: 
+    repo: 'ppa:brightbox/ruby-ng' 
+    state: present
+
+
+# Install packages via apt
+- name: Install packages
+  become: yes
+  apt: 
+    pkg: "{{ item }}"
+    state: present 
+    update_cache: yes
+  with_items:
+    - ruby{{ ruby_version }}
+    - ruby{{ ruby_version }}-dev
+    - ruby-switch
+    - libmysqlclient-dev
+    - libsqlite3-dev
+    - mysql-client
+
+
+# Set default version of ruby
+- name: Set default ruby
+  become: yes
+  command: ruby-switch --set ruby{{ruby_version}}
+
+
+# Install bundler
+- name: Install bundler
+  become: yes
+  command: gem install bundler

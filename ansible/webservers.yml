@@ -1,0 +1,9 @@
+---
+
+- hosts: webservers
+  vars_files:
+    - vars/main.yml
+  roles: 
+    - { role: filesystem, tags: filesystem }
+    - { role: ruby,  tags: ruby }
+    - { role: nginx, tags: nginx }

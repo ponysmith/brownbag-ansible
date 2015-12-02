@@ -1,0 +1,46 @@
+---
+
+# Install MySQL
+- name: Install MySQL packages
+  become: yes
+  apt: 
+    pkg: "{{ item }}" 
+    state: installed 
+    update_cache: yes
+  with_items: 
+    - mysql-server
+    - python-mysqldb
+    - libmysqlclient-dev
+
+
+# Start MySQL and set to autostart
+- name: Start / enable MySQL
+  service: 
+    name: mysql 
+    state: started 
+    enabled: yes
+
+
+# Create user for remote access
+- name: Create mysql user
+  mysql_user: 
+    host: '%'
+    login_user: "{{ v_db_admin_user }}"
+    login_password: "{{ v_db_admin_pass }}"
+    name: "{{ v_db_usage_user }}"
+    password: "{{ v_db_usage_pass }}"
+    check_implicit_admin: yes
+    priv: "*.*:ALL,GRANT"
+    state: present
+
+
+# Create my.cnf file
+- name: Create my.cnf
+  become: yes
+  template: 
+    src: my.cnf.j2
+    dest: "{{ mysql_mycnf_path }}"
+    owner: mysql
+    mode: 0755
+  notify: 
+    - restart-mysql

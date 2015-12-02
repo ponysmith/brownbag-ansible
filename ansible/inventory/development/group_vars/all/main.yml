@@ -1,0 +1,5 @@
+---
+
+ssh_user: vagrant
+web_user: vagrant
+web_root: /vagrant
